@@ -53,32 +53,32 @@ def detect(args):
     ssd_anchors = ssd_net.anchors(net_shape)
 
     # Test on some demo image and visualize output.
-    for img_name in os.listdir(args.test_img_folder):
-        img = mpimg.imread(os.path.join(args.test_img_folder, img_name))
-        rimg, rpredictions, rlocalisations, rbbox_img = \
-            isess.run([image_4d, predictions, localisations, bbox_img],
-                feed_dict={img_input: img})
-    
-        # Get classes and bboxes from the net outputs.
-        rclasses, rscores, rbboxes = np_methods.ssd_bboxes_select(
-                rpredictions, rlocalisations, ssd_anchors,
-                select_threshold=args.thres, 
-                img_shape=net_shape, num_classes=args.num_classes, decode=True)
+    with open(args.output_fn, 'w') as f:
+        for img_name in os.listdir(args.test_img_folder):
+            img = mpimg.imread(os.path.join(args.test_img_folder, img_name))
+            rimg, rpredictions, rlocalisations, rbbox_img = \
+                isess.run([image_4d, predictions, localisations, bbox_img],
+                    feed_dict={img_input: img})
         
-        rbboxes = np_methods.bboxes_clip(rbbox_img, rbboxes)
-        rclasses, rscores, rbboxes = np_methods.bboxes_sort(rclasses, rscores, rbboxes)
-        rclasses, rscores, rbboxes = np_methods.bboxes_nms(rclasses, rscores, rbboxes, 
-            nms_threshold=0.45)
-        # Resize bboxes to original image shape. Note: useless for Resize.WARP!
-        rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
-        print(img.shape)
-        for k in xrange(rscores.shape[0]):
-            print('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
-                format(img_name.split('.')[0], rscores[k], 
-                    rbboxes[k][0]*img.shape[0],
-                    rbboxes[k][1]*img.shape[0],
-                    rbboxes[k][2]*img.shape[0],
-                    rbboxes[k][3]*img.shape[0]))
+            # Get classes and bboxes from the net outputs.
+            rclasses, rscores, rbboxes = np_methods.ssd_bboxes_select(
+                    rpredictions, rlocalisations, ssd_anchors,
+                    select_threshold=args.thres, 
+                    img_shape=net_shape, num_classes=args.num_classes, decode=True)
+            
+            rbboxes = np_methods.bboxes_clip(rbbox_img, rbboxes)
+            rclasses, rscores, rbboxes = np_methods.bboxes_sort(rclasses, rscores, rbboxes)
+            rclasses, rscores, rbboxes = np_methods.bboxes_nms(rclasses, rscores, rbboxes, 
+                nms_threshold=0.45)
+            # Resize bboxes to original image shape. Note: useless for Resize.WARP!
+            rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
+            for k in xrange(rscores.shape[0]):
+                f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
+                    format(img_name.split('.')[0], rscores[k], 
+                        rbboxes[k][0]*img.shape[0],
+                        rbboxes[k][1]*img.shape[0],
+                        rbboxes[k][2]*img.shape[0],
+                        rbboxes[k][3]*img.shape[0]))
 
     # visualization.bboxes_draw_on_img(img, rclasses, rscores, rbboxes, visualization.colors_plasma)
     # visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
@@ -92,6 +92,9 @@ if __name__ == '__main__':
     parser.add_argument('--dir', dest='test_img_folder', 
             help='The images folder to be detected',
             required=True, type=str)
+    parser.add_argument('--output', dest='output_fn', 
+            help='The output path',
+            default='detect_results.txt', type=str)
     parser.add_argument('--num_classes', dest='num_classes', 
             help='The number of classes',
             default=2, type=int)
