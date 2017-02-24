@@ -73,7 +73,12 @@ def detect(args):
         rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
         print(img.shape)
         for k in xrange(rscores.shape[0]):
-            print(img_name.split('.')[0], rscores[k], rbboxes[k])
+            print('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
+                format(img_name.split('.')[0], rscores[k], 
+                    rbboxes[k][0]*img.shape[0],
+                    rbboxes[k][1]*img.shape[0],
+                    rbboxes[k][2]*img.shape[0],
+                    rbboxes[k][3]*img.shape[0]))
 
     # visualization.bboxes_draw_on_img(img, rclasses, rscores, rbboxes, visualization.colors_plasma)
     # visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
@@ -93,9 +98,6 @@ if __name__ == '__main__':
     parser.add_argument('--thres', dest='thres', 
             help='The threshold of detection',
             default=0.6, type=float)
-    parser.add_argument('--img_size', dest='img_size', 
-            help='The original size of the image',
-            default=500, type=int)
 
     args = parser.parse_args()
 
