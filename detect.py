@@ -53,7 +53,7 @@ def detect(args):
     # Define the SSD model.
     reuse = True if 'ssd_net' in locals() else None
     ssd_net = ssd_vgg_300.SSDNet()
-    ssd_net.default_params._replace(num_classes=args.num_classes)
+    ssd_net.default_params._replace(num_classes=args.num_classes, no_annotation_label=args.num_classes)
     with slim.arg_scope(ssd_net.arg_scope(data_format=data_format)):
         predictions, localisations, _, _ = ssd_net.net(image_4d, is_training=False, reuse=reuse)
 
