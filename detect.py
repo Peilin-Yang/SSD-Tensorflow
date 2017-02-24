@@ -14,25 +14,6 @@ from nets import ssd_vgg_300, ssd_common, np_methods, nets_factory
 from preprocessing import ssd_vgg_preprocessing
 
 
-# Main image processing routine.
-def process_image(isess, img, select_threshold=0.6, nms_threshold=.45, net_shape=(300, 300)):
-    # Run SSD network.
-    rimg, rpredictions, rlocalisations, rbbox_img = isess.run([image_4d, predictions, localisations, bbox_img],
-                                                              feed_dict={img_input: img})
-    
-    # Get classes and bboxes from the net outputs.
-    rclasses, rscores, rbboxes = np_methods.ssd_bboxes_select(
-            rpredictions, rlocalisations, ssd_anchors,
-            select_threshold=select_threshold, img_shape=net_shape, num_classes=21, decode=True)
-    
-    rbboxes = np_methods.bboxes_clip(rbbox_img, rbboxes)
-    rclasses, rscores, rbboxes = np_methods.bboxes_sort(rclasses, rscores, rbboxes)
-    rclasses, rscores, rbboxes = np_methods.bboxes_nms(rclasses, rscores, rbboxes, nms_threshold=nms_threshold)
-    # Resize bboxes to original image shape. Note: useless for Resize.WARP!
-    rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
-    return rclasses, rscores, rbboxes
-
-
 def detect(args):
     slim = tf.contrib.slim
 
@@ -72,9 +53,8 @@ def detect(args):
     ssd_anchors = ssd_net.anchors(net_shape)
 
     # Test on some demo image and visualize output.
-    image_names = os.listdir(args.test_img_folder)
-    #img = mpimg.imread(path + image_names[-5])
-    for img in image_names:
+    for img_name in os.listdir(args.test_img_folder):
+        img = mpimg.imread(os.path.join(args.test_img_folder, img_name))
         rimg, rpredictions, rlocalisations, rbbox_img = \
             isess.run([image_4d, predictions, localisations, bbox_img],
                 feed_dict={img_input: img})
