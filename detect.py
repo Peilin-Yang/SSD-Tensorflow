@@ -55,7 +55,7 @@ def detect(args):
     # Test on some demo image and visualize output.
     with open(args.output_fn, 'w') as f:
         for img_name in os.listdir(args.test_img_folder):
-            img = cv2.imread(os.path.join(args.test_img_folder, img_name))
+            img = mpimg.imread(os.path.join(args.test_img_folder, img_name))
             rimg, rpredictions, rlocalisations, rbbox_img = \
                 isess.run([image_4d, predictions, localisations, bbox_img],
                     feed_dict={img_input: img})
@@ -72,13 +72,15 @@ def detect(args):
                 nms_threshold=0.45)
             # Resize bboxes to original image shape. Note: useless for Resize.WARP!
             rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
+            height = img.shape[0]
+            width = img.shape[1]
             for k in xrange(rscores.shape[0]):
                 f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
                     format(img_name.split('.')[0], rscores[k], 
-                        rbboxes[k][0]*img.shape[1],
-                        rbboxes[k][1]*img.shape[0],
-                        rbboxes[k][2]*img.shape[1],
-                        rbboxes[k][3]*img.shape[0]))
+                        rbboxes[k][0]*height,
+                        rbboxes[k][1]*width,
+                        rbboxes[k][2]*height,
+                        rbboxes[k][3]*width))
 
     # visualization.bboxes_draw_on_img(img, rclasses, rscores, rbboxes, visualization.colors_plasma)
     # visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
