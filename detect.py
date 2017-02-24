@@ -62,7 +62,8 @@ def detect(args):
         # Get classes and bboxes from the net outputs.
         rclasses, rscores, rbboxes = np_methods.ssd_bboxes_select(
                 rpredictions, rlocalisations, ssd_anchors,
-                select_threshold=select_threshold, img_shape=net_shape, num_classes=21, decode=True)
+                select_threshold=args.thres, 
+                img_shape=net_shape, num_classes=args.num_classes, decode=True)
         
         rbboxes = np_methods.bboxes_clip(rbbox_img, rbboxes)
         rclasses, rscores, rbboxes = np_methods.bboxes_sort(rclasses, rscores, rbboxes)
@@ -87,6 +88,9 @@ if __name__ == '__main__':
     parser.add_argument('--num_classes', dest='num_classes', 
             help='The number of classes',
             default=2, type=int)
+    parser.add_argument('--thres', dest='thres', 
+            help='The threshold of detection',
+            default=0.6, type=float)
 
     args = parser.parse_args()
 
