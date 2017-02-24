@@ -10,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-from nets import ssd_vgg_300, ssd_common, np_methods
+from nets import ssd_vgg_300, ssd_common, np_methods, nets_factory
 from preprocessing import ssd_vgg_preprocessing
 
 
@@ -52,8 +52,12 @@ def detect(args):
 
     # Define the SSD model.
     reuse = True if 'ssd_net' in locals() else None
-    ssd_net = ssd_vgg_300.SSDNet()
-    ssd_net.default_params._replace(num_classes=args.num_classes, no_annotation_label=args.num_classes)
+    ssd_class = nets_factory.get_network('ssd_vgg_300')
+    ssd_params = ssd_class.default_params._replace(
+        num_classes=args.num_classes, 
+        no_annotation_label=args.num_classes
+    )
+    ssd_net = ssd_class(ssd_params)
     with slim.arg_scope(ssd_net.arg_scope(data_format=data_format)):
         predictions, localisations, _, _ = ssd_net.net(image_4d, is_training=False, reuse=reuse)
 
