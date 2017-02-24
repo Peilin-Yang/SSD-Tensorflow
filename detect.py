@@ -15,7 +15,7 @@ from preprocessing import ssd_vgg_preprocessing
 
 
 # Main image processing routine.
-def process_image(img, select_threshold=0.6, nms_threshold=.45, net_shape=(300, 300)):
+def process_image(isess, img, select_threshold=0.6, nms_threshold=.45, net_shape=(300, 300)):
     # Run SSD network.
     rimg, rpredictions, rlocalisations, rbbox_img = isess.run([image_4d, predictions, localisations, bbox_img],
                                                               feed_dict={img_input: img})
@@ -75,7 +75,7 @@ def detect(args):
     image_names = os.listdir(args.test_img_folder)
     #img = mpimg.imread(path + image_names[-5])
     for img in image_names:
-        rclasses, rscores, rbboxes = process_image(img)
+        rclasses, rscores, rbboxes = process_image(isess, img)
         print(rclasses, rscores, rbboxes)
         exit()
 
