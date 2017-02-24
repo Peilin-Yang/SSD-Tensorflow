@@ -172,7 +172,7 @@ def _add_to_tfrecord(dataset_dir, dataset, name, tfrecord_writer):
       tfrecord_writer: The TFRecord writer to use for writing.
     """
     image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
-        _process_image(dataset_dir, dataset, name)
+        _process_image(dataset_dir, name, dataset)
     example = _convert_to_example(image_data, labels, labels_text,
                                   bboxes, shape, difficult, truncated)
     tfrecord_writer.write(example.SerializeToString())
@@ -199,9 +199,6 @@ def run(dataset_dir, output_dir, name='bib', dataset='training'):
     # Dataset filenames
     path = os.path.join(dataset_dir, DIRECTORY_ANNOTATIONS, dataset)
     filenames = [fn.split('.')[0] for fn in os.listdir(path)]
-    print(path)
-    print(filenames)
-    exit()
     #filenames = sorted(os.listdir(path))
 
     # Process dataset files.
