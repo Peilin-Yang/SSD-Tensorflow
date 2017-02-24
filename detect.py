@@ -71,7 +71,9 @@ def detect(args):
             nms_threshold=0.45)
         # Resize bboxes to original image shape. Note: useless for Resize.WARP!
         rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
-        print(rclasses, rscores, rbboxes)
+        print(img.shape)
+        for k in xrange(rscores.shape[0]):
+            print(img_name.split('.')[0], rscores[k], rbboxes[k])
 
     # visualization.bboxes_draw_on_img(img, rclasses, rscores, rbboxes, visualization.colors_plasma)
     # visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
@@ -91,6 +93,9 @@ if __name__ == '__main__':
     parser.add_argument('--thres', dest='thres', 
             help='The threshold of detection',
             default=0.6, type=float)
+    parser.add_argument('--img_size', dest='img_size', 
+            help='The original size of the image',
+            default=500, type=int)
 
     args = parser.parse_args()
 
