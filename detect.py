@@ -72,7 +72,6 @@ def detect(args):
         # Resize bboxes to original image shape. Note: useless for Resize.WARP!
         rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
         print(rclasses, rscores, rbboxes)
-        exit()
 
     # visualization.bboxes_draw_on_img(img, rclasses, rscores, rbboxes, visualization.colors_plasma)
     # visualization.plt_bboxes(img, rclasses, rscores, rbboxes)
