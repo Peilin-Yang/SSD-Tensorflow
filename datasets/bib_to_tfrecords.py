@@ -173,7 +173,7 @@ def _add_to_tfrecord(dataset_dir, dataset, name, tfrecord_writer):
 
 
 def _get_output_filename(output_dir, dataset, name):
-    return '%s/%s_%s.tfrecord' % (output_dir, dataset, name)
+    return '%s/%s_%s.tfrecord' % (output_dir, name, dataset)
 
 
 def run(dataset_dir, output_dir, name='bib', dataset='training'):
