@@ -52,7 +52,7 @@ def detect(args):
 
     # Define the SSD model.
     reuse = True if 'ssd_net' in locals() else None
-    ssd_class = nets_factory.get_network('ssd_vgg_300')
+    ssd_class = nets_factory.get_network('ssd_300_vgg')
     ssd_params = ssd_class.default_params._replace(
         num_classes=args.num_classes, 
         no_annotation_label=args.num_classes
