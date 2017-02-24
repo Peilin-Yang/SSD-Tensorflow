@@ -67,7 +67,8 @@ def detect(args):
         
         rbboxes = np_methods.bboxes_clip(rbbox_img, rbboxes)
         rclasses, rscores, rbboxes = np_methods.bboxes_sort(rclasses, rscores, rbboxes)
-        rclasses, rscores, rbboxes = np_methods.bboxes_nms(rclasses, rscores, rbboxes, nms_threshold=nms_threshold)
+        rclasses, rscores, rbboxes = np_methods.bboxes_nms(rclasses, rscores, rbboxes, 
+            nms_threshold=0.45)
         # Resize bboxes to original image shape. Note: useless for Resize.WARP!
         rbboxes = np_methods.bboxes_resize(rbbox_img, rbboxes)
         print(rclasses, rscores, rbboxes)
