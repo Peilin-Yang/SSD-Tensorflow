@@ -163,7 +163,7 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
     return example
 
 
-def _add_to_tfrecord(dataset_dir, name, tfrecord_writer):
+def _add_to_tfrecord(dataset_dir, dataset, name, tfrecord_writer):
     """Loads data from image and annotations files and add them to a TFRecord.
 
     Args:
@@ -172,7 +172,7 @@ def _add_to_tfrecord(dataset_dir, name, tfrecord_writer):
       tfrecord_writer: The TFRecord writer to use for writing.
     """
     image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
-        _process_image(dataset_dir, name)
+        _process_image(dataset_dir, dataset, name)
     example = _convert_to_example(image_data, labels, labels_text,
                                   bboxes, shape, difficult, truncated)
     tfrecord_writer.write(example.SerializeToString())
@@ -182,7 +182,7 @@ def _get_output_filename(output_dir, name):
     return '%s/%s.tfrecord' % (output_dir, name)
 
 
-def run(dataset_dir, output_dir, name='bib', shuffling=False):
+def run(dataset_dir, output_dir, name='bib', dataset='training'):
     """Runs the conversion operation.
 
     Args:
@@ -196,12 +196,10 @@ def run(dataset_dir, output_dir, name='bib', shuffling=False):
     if tf.gfile.Exists(tf_filename):
         print('Dataset files already exist. Exiting without re-creating them.')
         return
-    # Dataset filenames, and shuffling.
-    path = os.path.join(dataset_dir, DIRECTORY_ANNOTATIONS)
-    filenames = sorted(os.listdir(path))
-    if shuffling:
-        random.seed(12345)
-        random.shuffle(filenames)
+    # Dataset filenames
+    path = os.path.join(dataset_dir, DIRECTORY_ANNOTATIONS, dataset)
+    filenames = [fn.split('.')[0] for fn in os.listdir(path)]
+    #filenames = sorted(os.listdir(path))
 
     # Process dataset files.
     with tf.python_io.TFRecordWriter(tf_filename) as tfrecord_writer:
@@ -209,8 +207,7 @@ def run(dataset_dir, output_dir, name='bib', shuffling=False):
             sys.stdout.write('\r>> Converting image %d/%d' % (i + 1, len(filenames)))
             sys.stdout.flush()
 
-            name = filename[:-4]
-            _add_to_tfrecord(dataset_dir, name, tfrecord_writer)
+            _add_to_tfrecord(dataset_dir, dataset, filename, tfrecord_writer)
 
     # Finally, write the labels file:
     # labels_to_class_names = dict(zip(range(len(_CLASS_NAMES)), _CLASS_NAMES))

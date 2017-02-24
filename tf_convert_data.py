@@ -38,6 +38,9 @@ tf.app.flags.DEFINE_string(
     'dataset_dir', None,
     'Directory where the original dataset is stored.')
 tf.app.flags.DEFINE_string(
+    'dataset', 'training',
+    'Either "training" or "testing". Purely for bib dataset')
+tf.app.flags.DEFINE_string(
     'output_name', 'bib',
     'Basename used for TFRecords output files.')
 tf.app.flags.DEFINE_string(
@@ -54,7 +57,7 @@ def main(_):
     if FLAGS.dataset_name == 'pascalvoc':
         pascalvoc_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
     elif FLAGS.dataset_name == 'bib':
-        bib_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
+        bib_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name, FLAGS.dataset)
     else:
         raise ValueError('Dataset [%s] was not recognized.' % FLAGS.dataset_name)
 
