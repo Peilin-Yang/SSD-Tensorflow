@@ -60,7 +60,7 @@ from datasets.bib_common import BIB_LABELS
 
 DIRECTORY_ANNOTATIONS = 'Annotations/'
 DIRECTORY_IMAGES = 'JPEGImages/'
-
+IMAGE_SHAPE =[500, 500, 3]
 
 def _process_image(directory, name, dataset='training'):
     """Process a image and annotation file.
@@ -85,11 +85,6 @@ def _process_image(directory, name, dataset='training'):
     tree = ET.parse(filename)
     root = tree.getroot()
 
-    # Image shape.
-    size = root.find('size')
-    shape = [int(size.find('height').text),
-             int(size.find('width').text),
-             int(size.find('depth').text)]
     # Find annotations.
     bboxes = []
     labels = []
@@ -111,15 +106,15 @@ def _process_image(directory, name, dataset='training'):
             truncated.append(0)
 
         bbox = obj.find('bndbox')
-        bboxes.append((float(bbox.find('ymin').text) / shape[0],
-                       float(bbox.find('xmin').text) / shape[1],
-                       float(bbox.find('ymax').text) / shape[0],
-                       float(bbox.find('xmax').text) / shape[1]
+        bboxes.append((float(bbox.find('ymin').text) / IMAGE_SHAPE[0],
+                       float(bbox.find('xmin').text) / IMAGE_SHAPE[1],
+                       float(bbox.find('ymax').text) / IMAGE_SHAPE[0],
+                       float(bbox.find('xmax').text) / IMAGE_SHAPE[1]
                        ))
-    return image_data, shape, bboxes, labels, labels_text, difficult, truncated
+    return image_data, bboxes, labels, labels_text, difficult, truncated
 
 
-def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
+def _convert_to_example(image_data, labels, labels_text, bboxes,
                         difficult, truncated):
     """Build an Example proto for an image example.
 
@@ -130,7 +125,6 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
       bboxes: list of bounding boxes; each box is a list of integers;
           specifying [xmin, ymin, xmax, ymax]. All boxes are assumed to belong
           to the same label as the image label.
-      shape: 3 integers, image shapes in pixels.
     Returns:
       Example proto
     """
@@ -146,10 +140,10 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
 
     image_format = b'JPEG'
     example = tf.train.Example(features=tf.train.Features(feature={
-            'image/height': int64_feature(shape[0]),
-            'image/width': int64_feature(shape[1]),
-            'image/channels': int64_feature(shape[2]),
-            'image/shape': int64_feature(shape),
+            'image/height': int64_feature(IMAGE_SHAPE[0]),
+            'image/width': int64_feature(IMAGE_SHAPE[1]),
+            'image/channels': int64_feature(IMAGE_SHAPE[2]),
+            'image/shape': int64_feature(IMAGE_SHAPE),
             'image/object/bbox/xmin': float_feature(xmin),
             'image/object/bbox/xmax': float_feature(xmax),
             'image/object/bbox/ymin': float_feature(ymin),
@@ -171,10 +165,10 @@ def _add_to_tfrecord(dataset_dir, dataset, name, tfrecord_writer):
       name: Image name to add to the TFRecord;
       tfrecord_writer: The TFRecord writer to use for writing.
     """
-    image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
+    image_data, bboxes, labels, labels_text, difficult, truncated = \
         _process_image(dataset_dir, name, dataset)
     example = _convert_to_example(image_data, labels, labels_text,
-                                  bboxes, shape, difficult, truncated)
+                                  bboxes, difficult, truncated)
     tfrecord_writer.write(example.SerializeToString())
 
 
