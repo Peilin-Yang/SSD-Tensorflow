@@ -46,6 +46,7 @@ serialized Example proto. The Example proto contains the following fields:
 Note that the length of xmin is identical to the length of xmax, ymin and ymax
 for each example.
 """
+from __future__ import print_function
 import os
 import sys
 import random
@@ -106,10 +107,16 @@ def _process_image(directory, name, dataset='training'):
             truncated.append(0)
 
         bbox = obj.find('bndbox')
-        bboxes.append((float(bbox.find('ymin').text) / IMAGE_SHAPE[0],
-                       float(bbox.find('xmin').text) / IMAGE_SHAPE[1],
-                       float(bbox.find('ymax').text) / IMAGE_SHAPE[0],
-                       float(bbox.find('xmax').text) / IMAGE_SHAPE[1]
+        ymin = float(bbox.find('ymin').text)
+        xmin = float(bbox.find('xmin').text)
+        ymax = float(bbox.find('ymax').text)
+        xmax = float(bbox.find('xmax').text)
+        if ymax > 500 or xmax > 500:
+            print(name)
+        bboxes.append((ymin / IMAGE_SHAPE[0],
+                       xmin / IMAGE_SHAPE[1],
+                       ymax / IMAGE_SHAPE[0],
+                       xmax / IMAGE_SHAPE[1]
                        ))
     return image_data, bboxes, labels, labels_text, difficult, truncated
 
