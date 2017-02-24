@@ -81,7 +81,7 @@ def _process_image(directory, name, dataset='training'):
 
     image_data = tf.gfile.FastGFile(filename, 'r').read()
     # Read the XML annotation file.
-    filename = os.path.join(directory, DIRECTORY_ANNOTATIONS, name + '.xml')
+    filename = os.path.join(directory, DIRECTORY_ANNOTATIONS, dataset, name + '.xml')
     tree = ET.parse(filename)
     root = tree.getroot()
 
