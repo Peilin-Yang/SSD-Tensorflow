@@ -75,9 +75,9 @@ def _process_image(directory, name, dataset='training'):
     """
     # Read the image file.
     if dataset == 'training':
-        filename = os.path.join(directory, DIRECTORY_IMAGES, name.split('-')[0], name + '.jpg')
+        filename = os.path.join(directory, DIRECTORY_IMAGES, dataset, name.split('-')[0], name + '.jpg')
     else:
-        filename = os.path.join(directory, DIRECTORY_IMAGES, name + '.jpg')
+        filename = os.path.join(directory, DIRECTORY_IMAGES, dataset, name + '.jpg')
 
     image_data = tf.gfile.FastGFile(filename, 'r').read()
     # Read the XML annotation file.
