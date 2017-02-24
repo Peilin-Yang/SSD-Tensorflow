@@ -189,8 +189,8 @@ def run(dataset_dir, output_dir, name='bib', shuffling=False):
       dataset_dir: The dataset directory where the dataset is stored.
       output_dir: Output directory.
     """
-    if not tf.gfile.Exists(dataset_dir):
-        tf.gfile.MakeDirs(dataset_dir)
+    if not tf.gfile.Exists(output_dir):
+        tf.gfile.MakeDirs(output_dir)
 
     tf_filename = _get_output_filename(output_dir, name)
     if tf.gfile.Exists(tf_filename):
