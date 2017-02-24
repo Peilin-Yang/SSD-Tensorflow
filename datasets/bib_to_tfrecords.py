@@ -178,8 +178,8 @@ def _add_to_tfrecord(dataset_dir, dataset, name, tfrecord_writer):
     tfrecord_writer.write(example.SerializeToString())
 
 
-def _get_output_filename(output_dir, name):
-    return '%s/%s.tfrecord' % (output_dir, name)
+def _get_output_filename(output_dir, dataset, name):
+    return '%s/%s_%s.tfrecord' % (output_dir, dataset, name)
 
 
 def run(dataset_dir, output_dir, name='bib', dataset='training'):
@@ -192,7 +192,7 @@ def run(dataset_dir, output_dir, name='bib', dataset='training'):
     if not tf.gfile.Exists(output_dir):
         tf.gfile.MakeDirs(output_dir)
 
-    tf_filename = _get_output_filename(output_dir, name)
+    tf_filename = _get_output_filename(output_dir, dataset, name)
     if tf.gfile.Exists(tf_filename):
         print('Dataset files already exist. Exiting without re-creating them.')
         return
