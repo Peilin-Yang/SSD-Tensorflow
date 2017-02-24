@@ -199,6 +199,9 @@ def run(dataset_dir, output_dir, name='bib', dataset='training'):
     # Dataset filenames
     path = os.path.join(dataset_dir, DIRECTORY_ANNOTATIONS, dataset)
     filenames = [fn.split('.')[0] for fn in os.listdir(path)]
+    print(path)
+    print(filenames)
+    exit()
     #filenames = sorted(os.listdir(path))
 
     # Process dataset files.
