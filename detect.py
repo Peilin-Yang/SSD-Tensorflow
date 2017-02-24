@@ -43,7 +43,7 @@ def detect(args):
 
     # Input placeholder.
     net_shape = (300, 300)
-    data_format = 'bib'
+    data_format = 'NCHW'
     img_input = tf.placeholder(tf.uint8, shape=(None, None, 3))
     # Evaluation pre-processing: resize to SSD net shape.
     image_pre, labels_pre, bboxes_pre, bbox_img = ssd_vgg_preprocessing.preprocess_for_eval(
