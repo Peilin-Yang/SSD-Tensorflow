@@ -75,7 +75,7 @@ def detect(args):
     image_names = os.listdir(args.test_img_folder)
     #img = mpimg.imread(path + image_names[-5])
     for img in image_names:
-        rimg, rpredictions, rlocalisations, rbbox_img = 
+        rimg, rpredictions, rlocalisations, rbbox_img = \
             isess.run([image_4d, predictions, localisations, bbox_img],
                 feed_dict={img_input: img})
     
