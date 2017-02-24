@@ -107,10 +107,10 @@ def _process_image(directory, name, dataset='training'):
             truncated.append(0)
 
         bbox = obj.find('bndbox')
-        ymin = float(bbox.find('ymin').text)
-        xmin = float(bbox.find('xmin').text)
-        ymax = float(bbox.find('ymax').text)
-        xmax = float(bbox.find('xmax').text)
+        ymin = max(min(float(bbox.find('ymin').text), IMAGE_SHAPE[0]), 0)
+        xmin = max(min(float(bbox.find('xmin').text), IMAGE_SHAPE[1]), 0)
+        ymax = max(min(float(bbox.find('ymax').text), IMAGE_SHAPE[0]), 0)
+        xmax = max(min(float(bbox.find('xmax').text), IMAGE_SHAPE[1]), 0)
         if ymax > 500 or xmax > 500:
             print(name)
         bboxes.append((ymin / IMAGE_SHAPE[0],
